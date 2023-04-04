@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javawebappbluedeployment
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: java-web-app
+      version: v1
+      color: blue
+  template:
+    metadata:
+      name: javawebapppod
+      labels:
+        app: java-web-app
+        version: v1
+        color: blue
+    spec:
+      containers:
+      - name: javawebappcontainer
+        image: ashokit/javawebapp
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+...

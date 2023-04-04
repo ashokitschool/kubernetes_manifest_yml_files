@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: ashokitns
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javawebapppod
+  labels:
+    app: javawebapp #very imp
+  namespace: ashokitns
+spec:
+  containers:
+  - name: javaweappcontainer
+    image: ashokit/javawebapp
+    ports:
+      - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javawebappsvc
+  namespace: ashokitns
+spec:
+  type: LoadBalancer
+  selector:
+    app: javawebapp  #POD label
+  ports:
+    - port: 80
+      targetPort: 8080
+...

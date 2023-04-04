@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: weshopify-db-config-map
+  labels: 
+    storage: weshopify-db-storage
+data: 
+ DB_DRIVER_NAME_VALUE: com.mysql.cj.jdbc.Driver
+ DB_HOST_SERVICE_NAME_VALUE: weshopify-app-db-service
+ DB_SCHEMA_VALUE: weshopify-app
+ DB_PORT_VALUE: "3306"

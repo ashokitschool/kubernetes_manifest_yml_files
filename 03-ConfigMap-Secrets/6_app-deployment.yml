@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-mysql
+spec:
+  selector:
+    matchLabels:
+      app: spring-boot-mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: spring-boot-mysql
+    spec:
+      containers:
+        - name: spring-boot-mysql
+          image: ashokit/spring-boot-mysql
+          ports:
+            - containerPort: 8080
+          env:   # Setting Enviornmental Variables
+            - name: DB_DRIVER_CLASS   # Setting Database host address from configMap
+              valueFrom :
+                configMapKeyRef :
+                  name : weshopify-db-config-map
+                  key :  DB_DRIVER_NAME_VALUE
+
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom :
+                configMapKeyRef :
+                  name : weshopify-db-config-map
+                  key :  DB_HOST_SERVICE_NAME_VALUE
+
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom :
+                configMapKeyRef :
+                  name : weshopify-db-config-map
+                  key :  DB_SCHEMA_VALUE
+
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom :
+                secretKeyRef :
+                  name : weshopify-db-config-secrete
+                  key :  DB_USER_NAME_VALUE
+
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom :
+                secretKeyRef :
+                  name : weshopify-db-config-secrete
+                  key :  DB_PASSWORD_VALUE
+---
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind we are creating
+metadata: # Metadata of the resource kind we are creating
+  name: springboot-mysql-svc
+spec:
+  selector:
+    app: spring-boot-mysql
+  ports:
+    - protocol: "TCP"
+      port: 8080 # The port that the service is running on in the cluster
+      targetPort: 8080 # The port exposed by the service
+      nodePort: 32151
+  type: NodePort # type of the service.

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+ name: weshopify-app-db-deployment
+ labels: 
+  app: weshopify-app-db
+spec:
+ template: 
+   metadata: 
+     labels: 
+       app: weshopify-app-db-pod
+   spec: 
+    volumes: 
+     - name: weshpify-app-db-volume
+       persistentVolumeClaim: 
+        claimName: weshopify-db-pvc
+    containers: 
+     - name: weshopify-app-db
+       image: mysql
+       ports: 
+        - containerPort: 3306
+       volumeMounts:
+         - name: weshpify-app-db-volume
+           mountPath: /opt/mysql
+       env: 
+        - name: MYSQL_ROOT_PASSWORD
+          #value: root
+          valueFrom: 
+           secretKeyRef: 
+            name: weshopify-db-config-secrete
+            key: DB_PASSWORD_VALUE
+        - name: MYSQL_DATABASE
+          #value: weshopify-app
+          valueFrom: 
+           configMapKeyRef: 
+            name: weshopify-db-config-map
+            key: DB_SCHEMA_VALUE
+ selector: 
+    matchLabels: 
+     app: weshopify-app-db-pod
+ replicas: 1
+---
+apiVersion: v1
+kind: Service
+metadata: 
+ name: weshopify-app-db-service
+ labels: 
+  app: weshopify-app-db-service
+spec:
+ type: NodePort
+ ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+ selector: 
+  app: weshopify-app-db-pod
