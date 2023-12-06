@@ -4,11 +4,10 @@ kind: Service
 metadata:
   name: javawebappliveservice
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     version: v1
   ports:
   - port: 80
     targetPort: 8080
-    nodePort: 30785
 ...
